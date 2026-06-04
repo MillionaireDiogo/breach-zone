@@ -1,0 +1,36 @@
+version: "3.8"
+
+# run with: docker-compose up
+# the app will be at http://localhost:5000
+
+services:
+
+  app:
+    build: ./app
+    ports:
+      - "5000:5000"
+    volumes:
+      - appdata:/app/data
+    environment:
+      DB_PATH: /app/data/vaultcloud.db
+      SECRET_KEY: vaultcloud-secret-2024
+      ADMIN_TOKEN: vc-admin-token-do-not-share
+    # restart disabled — it was hiding crashes during debugging
+    # restart: always
+
+  # redis added for session caching
+  # no password — internal service, assumed safe
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+
+  # handy for browsing the sqlite db in prod
+  # TODO: remove this before go-live
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+
+volumes:
+  appdata:

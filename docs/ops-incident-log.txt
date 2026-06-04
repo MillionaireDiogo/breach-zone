@@ -1,0 +1,77 @@
+VAULTCLOUD OPERATIONS & INCIDENT LOG
+=====================================
+(started keeping this after the third outage)
+
+2024-01-10
+App went down for 3 hours. Root cause: ran out of disk on the EC2 instance.
+Fix: SSH in, deleted old Docker images. Added reminder to clean up monthly.
+Nobody has done this.
+
+2024-01-24
+Someone from the QA team tried to test with a SQL query in the username field.
+Got all accounts back. We said we'd fix the query but it's "low priority."
+No customer data was exposed (we think).
+
+2024-02-07
+Received an automated email from GitHub: "secret detected in repository."
+It was the .env file. We removed it from the current commit.
+The file is still in the git history. Nobody has rotated the keys.
+"It's fine, the repo is private."
+
+2024-02-19
+AWS sent a billing alert. Spend was 3x normal.
+Investigation: someone created 47 EC2 instances "for testing" using the shared credentials.
+They were running a crypto miner.
+We deleted them. Keys were not rotated because "too many things depend on them."
+
+2024-03-04
+Security researcher emailed us.
+They found /debug/config and got our Stripe live key, admin token, and all env vars.
+We disabled the endpoint for 2 days then re-enabled it "because prod debugging needs it."
+Stripe key was not rotated. "We'd have to update it in too many places."
+
+2024-03-15
+Failed compliance audit.
+Findings: no MFA on IAM users, no CloudTrail, no encryption at rest,
+database publicly accessible, no backup retention policy.
+We said we'd fix these "in Q2."
+
+2024-04-01
+Junior developer accidentally ran a DROP TABLE on the prod database.
+They had admin credentials because "everyone uses the same account."
+Backups: the last backup was taken manually 6 weeks ago.
+We restored from that backup. Lost 6 weeks of transactions.
+"This won't happen again." (No controls were added.)
+
+2024-04-20
+GuardDuty findings appeared in the console.
+We didn't know GuardDuty was enabled (it was a free trial that auto-renewed).
+Findings included: credential exfiltration, unusual API calls, and port scanning.
+We dismissed all findings. "Probably false positives."
+GuardDuty trial has since expired.
+
+2024-05-05
+New developer asked why Redis has no password.
+Answer: "it's internal, only accessible on the VPC."
+Redis port 6379 is open to 0.0.0.0/0 on the security group.
+Redis has no password.
+
+2024-05-18
+AWS support contacted us about an IAM user making API calls from an unusual region.
+The IAM user had AdministratorAccess and no MFA.
+We deleted the user. We did not rotate the access keys for other users.
+We do not know what data was accessed.
+
+CURRENT KNOWN STATE:
+- CloudTrail: disabled in us-west-2 and eu-west-1
+- GuardDuty: expired, not active
+- MFA: not enforced on any IAM user
+- Encryption at rest: disabled on RDS and S3
+- Backup retention: 0 days
+- Security groups: 0.0.0.0/0 on all ports for all services
+- IAM: AdministratorAccess on app role and lambda role
+- Secrets: plaintext in SSM, .env file in git history
+- Logging: no centralised logs, no alerts
+- Vulnerability scanning: never run
+- Penetration test: never conducted
+- Incident response plan: this file
