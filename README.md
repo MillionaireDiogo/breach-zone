@@ -1,4 +1,4 @@
-# VaultCloud — Breach Zone Starting Environment
+# VaultCloud - Breach Zone Starting Environment
 
 > **You have just been hired as the first security engineer at VaultCloud.**
 > The previous team moved fast. Security was "on the roadmap."
@@ -16,38 +16,15 @@ Understand what you have inherited first.
 
 ---
 
-## What is in this repository
-vaultcloud/
-├── app/
-│   ├── app.py              # Flask API — the application you are securing
-│   ├── requirements.txt    # Dependencies (some with known CVEs)
-│   └── Dockerfile          # Container definition
-├── infra/
-│   └── breach-zone/
-│       └── main.tf         # The current AWS infrastructure — do not apply this
-├── configs/
-│   ├── .env                # Environment variables (should not be here)
-│   └── aws-credentials-template.txt
-├── .github/
-│   └── workflows/
-│       └── deploy.yml      # Current CI/CD pipeline
-├── docker-compose.yml      # Run the app locally
-├── docs/
-│   ├── ops-incident-log.txt   # 5 months of operational history
-│   └── DAY-1-CHECKLIST.md     # Where you start
-└── .gitignore              # Note what is and isn't being ignored
-
----
-
 ## What each file is and what is wrong with it
 
 **The app** (`app/app.py`) is a fintech API with five deliberate security problems: a SQL injection on the accounts endpoint, a `/debug/config` route returning live credentials and all environment variables, a `/debug/sql` route accepting raw SQL queries, plaintext password comparison on login, and an admin endpoint returning passwords and API keys to anyone with the hardcoded token. It runs locally with `docker-compose up` in under two minutes.
 
-**The Terraform** (`infra/breach-zone/main.tf`) is the Breach Zone in infrastructure form — AdministratorAccess on both the EC2 role and the Lambda role, hardcoded AWS keys in the provider block, database in a public subnet with encryption off and backups at zero days, 0.0.0.0/0 on all ports for all security groups, four SSM parameters all stored as plaintext String not SecureString, and a public-read S3 bucket for both uploads and logs.
+**The Terraform** (`infra/breach-zone/main.tf`) is the Breach Zone in infrastructure form. AdministratorAccess on both the EC2 role and the Lambda role, hardcoded AWS keys in the provider block, database in a public subnet with encryption off and backups at zero days, 0.0.0.0/0 on all ports for all security groups, four SSM parameters all stored as plaintext String not SecureString, and a public-read S3 bucket for both uploads and logs.
 
 **The ops log** (`docs/ops-incident-log.txt`) is the most important file. It tells the story of a crypto miner running on the account for days, a Stripe live key exposed through the debug endpoint and never rotated, 6 weeks of transaction data lost because backups were manual, and GuardDuty findings being dismissed as "probably false positives." Every entry maps directly to a deliverable in the project.
 
-**The Day 1 checklist** (`docs/DAY-1-CHECKLIST.md`) gives them six structured steps — run the app, do the secrets sweep, IAM audit, Prowler baseline, Trivy scan, network exposure map — with exact commands for each. They cannot start remediating until all six are done. That is the rule enforced in the checklist itself.
+**The Day 1 checklist** (`docs/DAY-1-CHECKLIST.md`) gives them six structured steps, run the app, do the secrets sweep, IAM audit, Prowler baseline, Trivy scan, network exposure map — with exact commands for each. They cannot start remediating until all six are done. That is the rule enforced in the checklist itself.
 
 ---
 
@@ -110,7 +87,7 @@ apt install terraform                      # Linux
 
 ## GitHub setup — for mentors
 
-Push this repository to `github.com/expadox-lab/vaultcloud-breach-zone` and enable it as a template repository under Settings. Each mentee clicks **Use this template** to get their own copy under their own account with no connection to other mentees' work. The git history is part of the story — do not have mentees clone and reinitialise. The history of commits that show how this codebase got into this state is deliberate context.
+Push this repository to `github.com/expadox-lab/vaultcloud-breach-zone` and enable it as a template repository under Settings. Each mentee clicks **Use this template** to get their own copy under their own account with no connection to other mentees' work. The git history is part of the story, do not have mentees clone and reinitialise. The history of commits that show how this codebase got into this state is deliberate context.
 
 ---
 
