@@ -24,7 +24,7 @@ Understand what you have inherited first.
 
 **The ops log** (`docs/ops-incident-log.txt`) is the most important file. It tells the story of a crypto miner running on the account for days, a Stripe live key exposed through the debug endpoint and never rotated, 6 weeks of transaction data lost because backups were manual, and GuardDuty findings being dismissed as "probably false positives." Every entry maps directly to a deliverable in the project.
 
-**The Day 1 checklist** (`docs/DAY-1-CHECKLIST.md`) gives them six structured steps, run the app, do the secrets sweep, IAM audit, Prowler baseline, Trivy scan, network exposure map — with exact commands for each. They cannot start remediating until all six are done. That is the rule enforced in the checklist itself.
+**The Day 1 checklist** (`docs/DAY-1-CHECKLIST.md`) gives them six structured steps, run the app, do the secrets sweep, IAM audit, Prowler baseline, Trivy scan, network exposure map, with exact commands for each. They cannot start remediating until all six are done. That is the rule enforced in the checklist itself.
 
 ---
 
@@ -40,7 +40,7 @@ Key endpoints to explore on Day 1:
 
 | Endpoint | Method | What to note |
 |---|---|---|
-| `/health` | GET | Baseline — confirm the app is running |
+| `/health` | GET | Baseline, confirm the app is running |
 | `/api/v1/accounts` | GET | What is returned without any authentication? |
 | `/api/v1/accounts/admin` | GET | What fields come back for an admin account? |
 | `/api/v1/accounts/admin'--` | GET | What does this return and why? |
